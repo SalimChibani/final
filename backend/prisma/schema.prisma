@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int             @id @default(autoincrement())
+  email          String          @unique
+  password       String
+  role           Role            @default(USER)
+  createdAt      DateTime        @default(now())
+  profileImage   String?
+  products       Product[]
+  exportInvoices ExportInvoice[]
+  userInfo       UserInfo?
+  updatedAt      DateTime        @updatedAt
+}
+
+model UserInfo {
+  id               Int        @id @default(autoincrement())
+   
+   userImage     String?
+  spec            Spec?       // add this line if it's not already included
+  societeName      String?
+  agentName        String?
+  societeLocation  String?
+  legalForm        String?
+  activity         String?
+  workshopLocation String?
+  phoneNumber      String?
+  storageLocation  String?
+  fax              String?
+  numberOfAdmin    String?
+  numberOfWorker   String?
+  taxId            String?
+  diwanaId         String?
+  commercialId     String?
+  localType        LocalType  @default(Full)
+  exportType       ExportType @default(Owned)
+  userId           Int        @unique
+  user             User       @relation(fields: [userId], references: [id])
+}
+
+model Product {
+  id                Int             @id @default(autoincrement())
+  name              String
+  productIdentifier String?
+  productImage      String?
+
+  exportInvoices    ExportInvoice[]
+ 
+  userId            Int
+  user              User            @relation(fields: [userId], references: [id])
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+
+
+model Category {
+  id             Int             @id @default(autoincrement())
+  name           String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  exportInvoices ExportInvoice[]
+}
+
+model ExportInvoice {
+  id              Int         @id @default(autoincrement())
+  exporter        String?
+  numFact         String?
+  societe         String?
+  societelocation String?
+  municipalite    Gouvernorat 
+  transport Transport  
+  quantity        String?
+  price           Float?
+  status          Boolean     @default(false)
+  factDate        DateTime    @default(now())
+  createdAt       DateTime    @default(now())
+  categoryId      Int
+  category        Category    @relation(fields: [categoryId], references: [id])
+  userId          Int
+  user            User        @relation(fields: [userId], references: [id])
+  productId       Int
+  product         Product     @relation(fields: [productId], references: [id])
+  exportImage      String?
+  country Country
+
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum LocalType {
+  Full
+  Partial
+}
+
+enum ExportType {
+  Owned
+  Rent
+}
+
+enum Gouvernorat {
+  SAYADA_LAMTA_BOU_HAJAR
+  KSIBET_EL_MEDIOUNI
+  KSAR_HELAL
+  JEMMAL
+  SAHLINE
+  MONASTIR
+  MOKNINE
+  OUERDANINE
+  TEBOULBA
+  ZERAMDINE
+  BEKALTA
+  BEMBLA
+  BENI_HASSEN
+}
+enum Transport {
+poste
+air 
+tair
+}
+enum Spec {
+  transiteur
+  transporteur
+  societe_de_commerce
+}
+enum Country { 
+   Paraguay
+  Peru
+  Philippines
+  Poland
+  Portugal
+  Qatar
+  SouthKorea
+  RepublicoftheCongo
+  Romania
+  Russia
+  SaudiArabia
+  Senegal
+  Serbia
+  Slovakia
+  Slovenia
+  SouthAfrica
+  SouthSudan
+  Spain
+  Sudan
+  Sweden
+  Switzerland
+  Syria
+  Tunisia
+  Turkey
+  Uganda
+  Ukraine
+  UnitedArabEmirates
+  UnitedKingdom
+  Uruguay
+}
