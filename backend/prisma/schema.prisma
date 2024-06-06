@@ -8,17 +8,20 @@ datasource db {
 }
 
 model User {
-  id             Int             @id @default(autoincrement())
-  email          String          @unique
-  password       String
-  role           Role            @default(USER)
-  createdAt      DateTime        @default(now())
-  profileImage   String?
-  products       Product[]
-  exportInvoices ExportInvoice[]
-  userInfo       UserInfo?
-  updatedAt      DateTime        @updatedAt
+  id                   Int             @id @default(autoincrement())
+  email                String          @unique
+  password             String
+  role                 Role            @default(USER)
+  createdAt            DateTime        @default(now())
+  profileImage         String?
+  products             Product[]
+  exportInvoices       ExportInvoice[]
+  userInfo             UserInfo?
+  updatedAt            DateTime        @updatedAt
+  resetPasswordToken   String?         // Token for resetting the password
+  resetPasswordExpires DateTime?       // Expiration time for the reset token
 }
+
 
 model UserInfo {
   id               Int        @id @default(autoincrement())
@@ -47,12 +50,12 @@ model UserInfo {
 
 model Product {
   id                Int             @id @default(autoincrement())
-  name              String
-  productIdentifier String?
+  name              String          @unique
+  productIdentifier String?         @unique
   productImage      String?
 
   exportInvoices    ExportInvoice[]
- 
+
   userId            Int
   user              User            @relation(fields: [userId], references: [id])
   createdAt         DateTime        @default(now())
