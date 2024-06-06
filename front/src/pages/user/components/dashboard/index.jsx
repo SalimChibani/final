@@ -6,8 +6,7 @@ import { tokens } from "../../../../theme";
 import axiosInstance from "../../../../axios-instance";
 import PieChart from "../charts/PieChart";
 import BarChart from "../charts/BarChart";
-import PieChart2 from '../../../../components/PieChart2';
-
+import CountryBarChart from "../charts/countryBarChart";
 const UserDashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -73,7 +72,8 @@ const UserDashboard = () => {
 
   async function fetchTopCountriesForUser() {
     try {
-      const result = await axiosInstance.get('user-kpis/top-countries-for-user');
+      const result = await axiosInstance.get('user-kpis/export-invoices-by-country');
+      console.log("🚀 ~ fetchTopCountriesForUser ~ result:", result)
       setTopCountries(result.data);
     } catch (error) {
       console.error(error);
@@ -131,6 +131,7 @@ const UserDashboard = () => {
             <BarChart data={topProducts} />
           </Box>
         </Box>
+        
         <Box gridColumn="span 4" gridRow="span 2" backgroundColor={colors.primary[400]}>
           <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>
@@ -144,7 +145,16 @@ const UserDashboard = () => {
         
 
         {/* Add the section for top countries */}
-        
+        <Box gridColumn="span 12" gridRow="span 2" backgroundColor={colors.primary[400]}>
+          <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>
+              Export Invoices by Country
+            </Typography>
+          </Box>
+          <Box height="250px" m="-20px 0 0 0">
+            <CountryBarChart data={exportInvoicesByCountry} />
+          </Box>
+        </Box>
       </Box>
     </Box>
   );

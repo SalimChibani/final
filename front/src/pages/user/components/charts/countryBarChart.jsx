@@ -1,14 +1,15 @@
+import React from 'react';
 import { useTheme } from "@mui/material";
 import { ResponsiveBar } from "@nivo/bar";
 import { tokens } from "../../../../theme";
 
-const BarChart = ({ data, isDashboard = false }) => {
+const CountryBarChart = ({ data, isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const transformedData = data.map(item => ({
-    category: item.product_name || item.userId,
-    quantity: item.total_quantity || item._sum?.price,
+    category: item.country,
+    quantity: item._count.country,
   }));
 
   return (
@@ -79,7 +80,7 @@ const BarChart = ({ data, isDashboard = false }) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "Category",
+        legend: isDashboard ? undefined : "Country",
         legendPosition: "middle",
         legendOffset: 32,
       }}
@@ -87,7 +88,7 @@ const BarChart = ({ data, isDashboard = false }) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "Quantity",
+        legend: isDashboard ? undefined : "Number of Export Invoices",
         legendPosition: "middle",
         legendOffset: -40,
       }}
@@ -124,10 +125,10 @@ const BarChart = ({ data, isDashboard = false }) => {
       ]}
       role="application"
       barAriaLabel={function (e) {
-        return e.id + ": " + e.formattedValue + " in category: " + e.indexValue;
+        return e.id + ": " + e.formattedValue + " in country: " + e.indexValue;
       }}
     />
   );
 };
 
-export default BarChart;
+export default CountryBarChart;
