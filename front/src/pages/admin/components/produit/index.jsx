@@ -15,6 +15,7 @@ const Produits = () => {
     const [editProduct, setEditProduct] = useState(null);
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
     const token = useSelector((state) => state.auth.user.accessToken);
 
     useEffect(() => {
@@ -61,14 +62,19 @@ const Produits = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/product/${id}`, {
+            const res = await axios.delete(`http://localhost:5000/product/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            setProductData(productData.filter((row) => row.id !== id));
+            
+            if (res.status === 200) {
+                setProductData(productData.filter((row) => row.id !== id));
+            } else {
+                console.log('Failed to delete product');
+            }
         } catch (err) {
-            console.log(err);
+            console.log('Error deleting product:', err);
         }
     };
 
@@ -140,12 +146,25 @@ const Produits = () => {
         }
     };
 
+    const filteredProducts = productData.filter(product => 
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        product.productIdentifier.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <Box m="20px">
             <Header title="Produit" subtitle="Liste des produits" />
             <Button variant="contained" color="primary" onClick={handleAdd} style={{ marginTop: '20px' }}>
                 Add Product
             </Button>
+            <TextField
+                fullWidth
+                label="Search"
+                variant="outlined"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ margin: '20px 0' }}
+            />
             <Box
                 m="40px 0 0 0"
                 sx={{
@@ -154,7 +173,7 @@ const Produits = () => {
                     gap: '20px'
                 }}
             >
-                {productData.map((product) => (
+                {filteredProducts.map((product) => (
                     <Card key={product.id} sx={{ backgroundColor: colors.primary[400] }}>
                         <CardContent>
                             <Typography variant="h5" component="div">
@@ -238,4 +257,3 @@ const Produits = () => {
 };
 
 export default Produits;
-    
