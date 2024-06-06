@@ -18,10 +18,20 @@
             res.status(200).json(newProduct);
         } catch (error) {
             console.error('Error creating product:', error);
-            res.status(500).json({ error: 'Error creating product' });
+            if (error.code === 'P2002') {  // Prisma unique constraint violation code
+                const target = error.meta.target;
+                if (target.includes('name')) {
+                    res.status(409).json({ error: 'Product name must be unique' });
+                } else if (target.includes('productIdentifier')) {
+                    res.status(409).json({ error: 'Product identifier must be unique' });
+                } else {
+                    res.status(500).json({ error: 'Error creating product' });
+                }
+            } else {
+                res.status(500).json({ error: 'Error creating product' });
+            }
         }
     };
-
     const getProductImage = async (req, res) => {
         const productId = req.params.id;
         try {
@@ -114,10 +124,20 @@
             res.status(200).json(updatedProduct);
         } catch (error) {
             console.error('Error updating product:', error);
-            res.status(500).json({ error: 'Error updating product' });
+            if (error.code === 'P2002') {  // Prisma unique constraint violation code
+                const target = error.meta.target;
+                if (target.includes('name')) {
+                    res.status(409).json({ error: 'Product name must be unique' });
+                } else if (target.includes('productIdentifier')) {
+                    res.status(409).json({ error: 'Product identifier must be unique' });
+                } else {
+                    res.status(500).json({ error: 'Error updating product' });
+                }
+            } else {
+                res.status(500).json({ error: 'Error updating product' });
+            }
         }
     };
-
     const deleteProduct = async (req, res) => {
         const productId = req.params.id;
         try {
