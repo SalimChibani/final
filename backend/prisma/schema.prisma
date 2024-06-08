@@ -72,29 +72,33 @@ model Category {
   exportInvoices ExportInvoice[]
 }
 
-model ExportInvoice {
-  id              Int         @id @default(autoincrement())
-  exporter        String?
-  numFact         String?
-  societe         String?
-  societelocation String?
-  municipalite    Gouvernorat 
-  transport Transport  
-  quantity        String?
-  price           Float?
-  status          Boolean     @default(false)
-  factDate        DateTime    @default(now())
-  createdAt       DateTime    @default(now())
-  categoryId      Int
-  category        Category    @relation(fields: [categoryId], references: [id])
-  userId          Int
-  user            User        @relation(fields: [userId], references: [id])
-  productId       Int
-  product         Product     @relation(fields: [productId], references: [id])
-  exportImage      String?
-  country Country
+    enum InvoiceStatus {
+      PENDING
+      ACTIVATED
+      REFUSED
+    }
 
-}
+    model ExportInvoice {
+      id              Int             @id @default(autoincrement())
+      exporter        String?
+      numFact         String?
+      societe         String?
+      societelocation String?
+      municipalite    Gouvernorat 
+      transport       Transport  
+      quantity        String?
+      price           Float?
+      status          InvoiceStatus   @default(PENDING)
+      factDate        DateTime        @default(now())
+      createdAt       DateTime        @default(now())
+      categoryId      Int
+      category        Category        @relation(fields: [categoryId], references: [id])
+      userId          Int
+      user            User            @relation(fields: [userId], references: [id])
+      productId       Int
+      product         Product         @relation(fields: [productId], references: [id])
+      country         Country
+    }
 
 enum Role {
   USER
@@ -128,14 +132,16 @@ enum Gouvernorat {
 }
 enum Transport {
 poste
-air 
-tair
+avion  
+bateau 
 }
 enum Spec {
-  transiteur
+  Transitaire
   transporteur
   societe_de_commerce
 }
+
+
 enum Country { 
    Paraguay
   Peru
